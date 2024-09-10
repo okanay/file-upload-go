@@ -41,7 +41,7 @@ func main() {
 	assetService := asset.NewService(assetRepo)
 	// Handlers
 	uploadHandler := upload.NewHandler(uploadService)
-	assetHandler := asset.NewAssetHandler("./public", "./public/blur", "./public/optimized", true, 60*time.Minute, assetService)
+	assetHandler := asset.NewAssetHandler(assetService, "./public", "./public/blur", "./public/optimized", true, 60*time.Minute)
 
 	// Upload Route
 	router.POST("/upload", uploadHandler.UploadFile)
@@ -59,5 +59,4 @@ func main() {
 	if err != nil {
 		return
 	}
-
 }

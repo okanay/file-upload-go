@@ -7,6 +7,8 @@ import (
 	"github.com/gin-contrib/secure"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -18,17 +20,21 @@ var SecureMiddleware = secure.New(secure.Config{
 })
 
 func CorsConfig() gin.HandlerFunc {
+	allowedOriginEnv := os.Getenv("ALLOWED_ORIGIN")
+	var origins = append(strings.Split(allowedOriginEnv, " "), "http://localhost:3000")
+	fmt.Println("[ALLOWED ORIGINS]:", origins)
+
 	config := cors.Config{
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowOrigins:     []string{"http://localhost:3000"}, // You can specify more origins if needed
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
-		AllowCredentials: true,                       // If you need credentials (cookies, HTTP auth), set this to true
-		ExposeHeaders:    []string{"Content-Length"}, // This is optional, depending on your needs
-		MaxAge:           12 * time.Hour,             // Cache the CORS response for 12 hours
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowOrigins:     origins,
+		AllowCredentials: true,
 	}
 
 	return cors.New(config)
 }
+
 func TimeoutMiddleware(timeout time.Duration) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(c.Request.Context(), timeout)

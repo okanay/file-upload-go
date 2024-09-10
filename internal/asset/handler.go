@@ -3,6 +3,7 @@ package asset
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/okanay/file-upload-go/types"
 	"github.com/okanay/file-upload-go/utils"
 	"os"
 	"path/filepath"
@@ -21,14 +22,14 @@ type AssetHandler struct {
 	service       *Service
 }
 
-func NewAssetHandler(publicDir, blurDir, optimizedDir string, autoClean bool, cleanInterval time.Duration, s *Service) *AssetHandler {
+func NewAssetHandler(s *Service, publicDir, blurDir, optimizedDir string, autoClean bool, cleanInterval time.Duration) *AssetHandler {
 	handler := &AssetHandler{
+		service:       s,
 		PublicDir:     publicDir,
 		BlurDir:       blurDir,
 		OptimizedDir:  optimizedDir,
 		AutoClean:     autoClean,
 		CleanInterval: cleanInterval,
-		service:       s,
 	}
 
 	if autoClean {
@@ -123,6 +124,11 @@ func (h *AssetHandler) GetAllAssets(c *gin.Context) {
 	assets, err := h.service.repository.GetAllAssets()
 	if err != nil {
 		c.JSON(500, gin.H{"message": "Error fetching assets: " + err.Error()})
+		return
+	}
+
+	if assets == nil || len(assets) == 0 {
+		c.JSON(200, gin.H{"assets": []types.Assets{}})
 		return
 	}
 
