@@ -1,0 +1,30 @@
+CREATE TABLE IF NOT EXISTS assets
+(
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    creator TEXT NOT NULL,
+    name TEXT NOT NULL,
+    type TEXT NOT NULL,
+    filename TEXT NOT NULL,
+    description TEXT,
+    size BIGINT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+    RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_assets_updated_at
+    BEFORE UPDATE ON assets
+    FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+
+
+
+

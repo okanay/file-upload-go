@@ -1,0 +1,46 @@
+# Derlenmiş dosyalar
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Go coverage tool çıktısı
+*.out
+
+# Bağımlılık dizinleri (https://github.com/golang/dep kullanılıyorsa)
+vendor/
+
+# Go çalışma alanı dosyası
+go.work
+
+# IDE dosyaları
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# İşletim sistemi dosyaları
+.DS_Store
+Thumbs.db
+
+# Log dosyaları
+*.log
+
+# Ortam değişkenleri dosyaları
+.env
+.env.local
+.env.*
+
+# Binary dosyalar
+bin/
+
+# Debug dosyaları
+debug
+
+# Geçici dosyalar
+tmp/
+temp/
