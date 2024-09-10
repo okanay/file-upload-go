@@ -21,16 +21,16 @@ func (h *Handler) UploadFile(c *gin.Context) {
 	file, header, err := c.Request.FormFile("file")
 	defer file.Close()
 
-	// Check if file bigger than max upload size
-	if header.Size > MAX_UPLOAD_SIZE {
-		c.JSON(404, gin.H{"error": "Max upload size exceeded."})
-		return
-	}
-
 	// Check if file extension is allowed
 	err = h.service.CheckFileType(header)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type: " + err.Error()})
+		return
+	}
+
+	// Check if file bigger than max upload size
+	if header.Size > MAX_UPLOAD_SIZE {
+		c.JSON(404, gin.H{"error": "Max upload size exceeded."})
 		return
 	}
 

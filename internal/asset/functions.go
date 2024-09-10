@@ -70,6 +70,13 @@ func OptimizeImage(publicDir, optimizedDir, filename string, quality int) error 
 		return fmt.Errorf("unsupported file format: %s", ext)
 	}
 
+	// before running the command, check if ffmpeg is installed
+	_, err = exec.LookPath("ffmpeg")
+	if err != nil {
+		fmt.Println("OPTIMIZE IMAGE ERROR: ", "ffmpeg is not installed")
+		return fmt.Errorf("ffmpeg is not installed: %v", err)
+	}
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("ffmpeg failed: %v, output: %s", err, string(output))
