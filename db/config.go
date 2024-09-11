@@ -50,6 +50,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		token, err := c.Cookie("session_token")
 		if err != nil {
+			fmt.Println("[ERROR]", err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			c.Abort()
 			return
@@ -73,8 +74,8 @@ func CookieMiddleware() gin.HandlerFunc {
 			Path:     "/",
 			MaxAge:   60 * 60 * 24 * 30, // 30 gün
 			HttpOnly: true,
-			Secure:   false,                 // HTTPS kullanıyorsan true yap
-			SameSite: http.SameSiteNoneMode, // Cross-site istekler için SameSite=None
+			Secure:   true, // HTTPS için zorunlu
+			SameSite: http.SameSiteNoneMode,
 		}
 
 		c.Set("cookie_options", cookieOptions)
