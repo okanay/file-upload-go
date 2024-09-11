@@ -72,8 +72,8 @@ func main() {
 		// Cookie ayarlarını kontrol etmek için log ekle
 		fmt.Println("[SET COOKIE] session_token:", sessionToken)
 
-		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", ".pdfrouters.com", true, true)
-		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "file.pdfrouters.com", false, false)
+		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "pdfrouters.com", true, true)
+		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "pdfrouters.com", false, false)
 		c.JSON(http.StatusOK, gin.H{"message": "Login Successful"})
 	})
 
