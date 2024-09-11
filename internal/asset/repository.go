@@ -11,6 +11,7 @@ type Repository struct {
 
 type IRepository interface {
 	GetAllAssets() ([]types.Assets, error)
+	GetAssetWithFilename(filename string) (types.Assets, error)
 	DeleteAsset(filename string) error
 }
 
@@ -49,4 +50,17 @@ func (r *Repository) DeleteAsset(filename string) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) GetAssetWithFilename(filename string) (types.Assets, error) {
+	var asset types.Assets
+
+	query := `SELECT id, creator, name, type, filename, description, size, created_at, updated_at FROM assets WHERE filename = $1`
+
+	err := r.db.QueryRow(query, filename).Scan(&asset.ID, &asset.Creator, &asset.Name, &asset.Type, &asset.Filename, &asset.Description, &asset.Size, &asset.CreatedAt, &asset.UpdatedAt)
+	if err != nil {
+		return asset, err
+	}
+
+	return asset, nil
 }

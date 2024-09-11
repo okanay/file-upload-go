@@ -141,18 +141,24 @@ func (h *AssetHandler) DeleteAsset(c *gin.Context) {
 
 	filename := c.PostForm("filename")
 	if filename == "" {
-		c.JSON(400, gin.H{"message": "Filename is required."})
+		c.JSON(400, gin.H{"message": "Filename is required. Please use FormData with 'filename' key."})
 		return
 	}
 
-	if utils.FileIsExist(filepath.Join(h.PublicDir, filename)) {
-		if err := os.Remove(filepath.Join(h.PublicDir, filename)); err != nil {
+	asset, err := h.service.repository.GetAssetWithFilename(filename)
+	if err != nil {
+		c.JSON(500, gin.H{"message": "Error deleting asset: " + err.Error()})
+		return
+	}
+
+	if utils.FileIsExist(filepath.Join(h.PublicDir, asset.Filename)) {
+		if err := os.Remove(filepath.Join(h.PublicDir, asset.Filename)); err != nil {
 			c.JSON(500, gin.H{"message": "Error deleting asset: " + err.Error()})
 			return
 		}
 	}
 
-	if err := h.service.repository.DeleteAsset(filename); err != nil {
+	if err := h.service.repository.DeleteAsset(asset.Filename); err != nil {
 		c.JSON(500, gin.H{"message": "Error deleting asset: " + err.Error()})
 		return
 	}
