@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/secure"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -21,18 +22,47 @@ var SecureMiddleware = secure.New(secure.Config{
 
 func CorsConfig() gin.HandlerFunc {
 	allowedOriginEnv := os.Getenv("ALLOWED_ORIGIN")
-	var origins = append(strings.Split(allowedOriginEnv, " "), "http://localhost:3000")
-	fmt.Println("[ALLOWED ORIGINS]:", origins)
-
-	config := cors.Config{
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowOrigins:     origins,
-		AllowCredentials: true,
+	if allowedOriginEnv == "" {
+		allowedOriginEnv = "http://localhost:3000"
 	}
+	origins := strings.Split(allowedOriginEnv, " ")
 
-	return cors.New(config)
+	return cors.New(cors.Config{
+		AllowOrigins:     origins,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	})
+}
+
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		secretKey := os.Getenv("SECRET_SESSION_KEY")
+
+		if secretKey == "" {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			c.Abort()
+			return
+		}
+
+		token, err := c.Cookie("session_token")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.Abort()
+			return
+		}
+
+		if token != secretKey {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.Abort()
+			return
+		}
+
+		log.Println("Authentication successful")
+		c.Next()
+	}
 }
 
 func TimeoutMiddleware(timeout time.Duration) gin.HandlerFunc {

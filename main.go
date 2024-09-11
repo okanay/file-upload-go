@@ -7,6 +7,7 @@ import (
 	"github.com/okanay/file-upload-go/internal/asset"
 	"github.com/okanay/file-upload-go/internal/upload"
 	"log"
+	"net/http"
 	"os"
 	"time"
 )
@@ -26,12 +27,15 @@ func main() {
 	}
 	defer db.Close(sqlDB)
 
-	// ->> Routers Groups
-	router := gin.Default()
 	// ->> Middlewares
+	router := gin.Default()
 	router.Use(db.SecureMiddleware)
 	router.Use(db.CorsConfig())
 	router.Use(db.TimeoutMiddleware(150 * time.Second))
+
+	// ->> Auth Middleware
+	auth := router.Group("auth")
+	auth.Use(db.AuthMiddleware())
 
 	// Repositories
 	uploadRepo := upload.NewRepository(sqlDB)
@@ -48,13 +52,29 @@ func main() {
 		c.JSON(200, gin.H{"message": "Welcome to File Upload API", "Language": "Go Lang", "Framework": "Gin Gonic"})
 	})
 
-	// Upload Route
-	router.POST("/upload", uploadHandler.UploadFile)
-
 	// Assets Route
 	router.GET("/assets/:filename", assetHandler.GetAsset)
 	router.GET("/assets/all", assetHandler.GetAllAssets)
-	router.POST("/assets/delete", assetHandler.DeleteAsset)
+
+	// Auth Routes
+	auth.POST("/upload", uploadHandler.UploadFile)
+	auth.POST("/assets/delete", assetHandler.DeleteAsset)
+
+	// Login Route
+	router.GET("/login", func(c *gin.Context) {
+		sessionToken := os.Getenv("SECRET_SESSION_KEY")
+		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "", true, true)
+		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "", false, false)
+		c.JSON(http.StatusOK, gin.H{"message": "Login Successful"})
+	})
+
+	// Logout Route
+	auth.GET("/logout", func(c *gin.Context) {
+		c.SetCookie("session_token", "", -1, "/", "", true, true)
+		c.SetCookie("auth-status", "logout", -1, "/", "", false, false)
+
+		c.JSON(200, gin.H{"message": "Logout Successful"})
+	})
 
 	// 404 Handler
 	router.NoRoute(func(c *gin.Context) {
