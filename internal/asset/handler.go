@@ -139,21 +139,22 @@ func (h *AssetHandler) DeleteAsset(c *gin.Context) {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 
-	// get filename from post body
 	filename := c.PostForm("filename")
+	if filename == "" {
+		c.JSON(400, gin.H{"message": "Filename is required."})
+		return
+	}
+
+	if utils.FileIsExist(filepath.Join(h.PublicDir, filename)) {
+		if err := os.Remove(filepath.Join(h.PublicDir, filename)); err != nil {
+			c.JSON(500, gin.H{"message": "Error deleting asset: " + err.Error()})
+			return
+		}
+	}
 
 	if err := h.service.repository.DeleteAsset(filename); err != nil {
 		c.JSON(500, gin.H{"message": "Error deleting asset: " + err.Error()})
 		return
-	}
-
-	normalPath := filepath.Join(h.PublicDir, filename)
-	if utils.FileIsExist(normalPath) {
-		if err := os.Remove(normalPath); err != nil {
-			c.JSON(500, gin.H{"message": "Error deleting asset: " + err.Error()})
-			fmt.Println("[ERROR] Error deleting asset:", err)
-			return
-		}
 	}
 
 	fmt.Println("[ASSET DELETED] Asset has been deleted:", filename)
