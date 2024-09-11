@@ -63,8 +63,9 @@ func main() {
 	// Login Route
 	router.GET("/login", func(c *gin.Context) {
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
-		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "", true, true)
-		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "", false, false)
+
+		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "", false, true) // secure=false, httponly=true
+		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "", false, false)       // secure=false, httponly=false
 		c.JSON(http.StatusOK, gin.H{"message": "Login Successful"})
 	})
 
