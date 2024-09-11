@@ -68,6 +68,7 @@ func main() {
 
 		c.SetSameSite(http.SameSiteNoneMode)
 		c.SetCookie("session_token", sessionToken, month, "/", "", true, false)
+		c.SetCookie("auth-status", "login", month, "/", "", true, false)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
 	})
