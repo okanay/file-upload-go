@@ -40,6 +40,7 @@ func CorsConfig() gin.HandlerFunc {
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		secretKey := os.Getenv("SECRET_SESSION_KEY")
+		fmt.Println("[SECRET-KEY]", secretKey)
 
 		if secretKey == "" {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
@@ -54,6 +55,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		fmt.Println("[TOKEN]", token)
 		if token != secretKey {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			c.Abort()
