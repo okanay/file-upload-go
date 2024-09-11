@@ -66,7 +66,7 @@ func main() {
 		twoMonth := 60 * 60 * 24 * 60
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
-		c.SetSameSite(http.SameSiteStrictMode)
+		c.SetSameSite(http.SameSiteLaxMode)
 		c.SetCookie("session_token", sessionToken, twoMonth, "/", "", true, true)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
