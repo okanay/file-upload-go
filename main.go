@@ -66,9 +66,9 @@ func main() {
 		year := 365 * 24 * 60 * 60 // Bir yıl
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
-		c.SetSameSite(http.SameSiteLaxMode)                                   // SameSite özelliği güvenliği artırır
-		c.SetCookie("session_token", sessionToken, year, "/", "", true, true) // HTTPOnly ve Secure
-		c.SetCookie("auth-status", "login", year, "/", "", true, true)
+		c.SetSameSite(http.SameSiteLaxMode)
+		c.SetCookie("session_token", sessionToken, year, "/", "https://file.pdfrouters.com", true, true)
+		c.SetCookie("auth-status", "login", year, "/", "https://file.pdfrouters.com", true, true)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
 	})
