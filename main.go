@@ -1,8 +1,7 @@
 package main
 
 import (
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/okanay/file-upload-go/db"
@@ -33,10 +32,8 @@ func main() {
 	router := gin.Default()
 	router.Use(db.SecureMiddleware)
 	router.Use(db.CorsConfig())
+	router.Use(db.CookieMiddleware())
 	router.Use(db.TimeoutMiddleware(150 * time.Second))
-
-	store := cookie.NewStore([]byte("your-secret-key"))
-	router.Use(sessions.Sessions("my-session", store))
 
 	// ->> Auth Middleware
 	auth := router.Group("auth")
@@ -67,21 +64,25 @@ func main() {
 
 	// Login Route
 	router.GET("/login", func(c *gin.Context) {
-		session := sessions.Default(c)
-		session.Set("session_token", "your-session-token")
-		session.Set("auth-status", "login")
-		session.Save()
+		sessionToken := os.Getenv("SECRET_SESSION_KEY")
+		if sessionToken == "" {
+			sessionToken = "default-token-value"
+		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+		// Cookie ayarlarını kontrol etmek için log ekle
+		fmt.Println("[SET COOKIE] session_token:", sessionToken)
+
+		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", ".pdfrouters.com", true, true)
+		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "file.pdfrouters.com", false, false)
+		c.JSON(http.StatusOK, gin.H{"message": "Login Successful"})
 	})
 
 	// Logout Route
 	auth.GET("/logout", func(c *gin.Context) {
-		session := sessions.Default(c)
-		session.Clear() // Tüm session verilerini temizle
-		session.Save()
+		c.SetCookie("session_token", "", -1, "/", "", true, true)
+		c.SetCookie("auth-status", "logout", -1, "/", "", false, false)
 
-		c.JSON(http.StatusOK, gin.H{"message": "Logged out"})
+		c.JSON(200, gin.H{"message": "Logout Successful"})
 	})
 
 	// 404 Handler
