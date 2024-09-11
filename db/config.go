@@ -70,15 +70,6 @@ func AuthMiddleware() gin.HandlerFunc {
 
 func CookieMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		cookieOptions := &http.Cookie{
-			Path:     "/",
-			MaxAge:   60 * 60 * 24 * 30, // 30 gün
-			HttpOnly: true,
-			Secure:   true, // HTTPS için zorunlu
-			SameSite: http.SameSiteNoneMode,
-		}
-
-		c.Set("cookie_options", cookieOptions)
 		c.Next()
 	}
 }
