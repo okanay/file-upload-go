@@ -11,6 +11,7 @@ type Repository struct {
 
 type IRepository interface {
 	GetAllAssets() ([]types.Assets, error)
+	DeleteAsset(name string) error
 }
 
 func NewRepository(db *sql.DB) *Repository {
@@ -37,4 +38,15 @@ func (r *Repository) GetAllAssets() ([]types.Assets, error) {
 	}
 
 	return assets, nil
+}
+
+func (r *Repository) DeleteAsset(name string) error {
+	query := `DELETE FROM assets WHERE name = $1`
+
+	_, err := r.db.Exec(query, name)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

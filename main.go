@@ -54,6 +54,7 @@ func main() {
 	// Assets Route
 	router.GET("/assets/:filename", assetHandler.GetAsset)
 	router.GET("/assets/all", assetHandler.GetAllAssets)
+	router.POST("/assets/delete", assetHandler.DeleteAsset)
 
 	// 404 Handler
 	router.NoRoute(func(c *gin.Context) {

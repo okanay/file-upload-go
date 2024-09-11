@@ -135,6 +135,31 @@ func (h *AssetHandler) GetAllAssets(c *gin.Context) {
 	c.JSON(200, gin.H{"assets": assets})
 }
 
+func (h *AssetHandler) DeleteAsset(c *gin.Context) {
+	h.mutex.Lock()
+	defer h.mutex.Unlock()
+
+	// get filename from post body
+	filename := c.PostForm("filename")
+
+	if err := h.service.repository.DeleteAsset(filename); err != nil {
+		c.JSON(500, gin.H{"message": "Error deleting asset: " + err.Error()})
+		return
+	}
+
+	normalPath := filepath.Join(h.PublicDir, filename)
+	if utils.FileIsExist(normalPath) {
+		if err := os.Remove(normalPath); err != nil {
+			c.JSON(500, gin.H{"message": "Error deleting asset: " + err.Error()})
+			fmt.Println("[ERROR] Error deleting asset:", err)
+			return
+		}
+	}
+
+	fmt.Println("[ASSET DELETED] Asset has been deleted:", filename)
+	c.JSON(200, gin.H{"message": "Asset has been deleted."})
+}
+
 func (h *AssetHandler) handleQualityOptimization(c *gin.Context, filename string) string {
 	quality := c.Query("quality")
 	if quality == "" {
