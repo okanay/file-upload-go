@@ -7,7 +7,6 @@ import (
 	"github.com/okanay/file-upload-go/internal/asset"
 	"github.com/okanay/file-upload-go/internal/upload"
 	"log"
-	"net/http"
 	"os"
 	"time"
 )
@@ -66,9 +65,9 @@ func main() {
 		year := 365 * 24 * 60 * 60 // Bir yıl
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
-		c.SetSameSite(http.SameSiteLaxMode)
-		c.SetCookie("session_token", sessionToken, year, "/", "https://file.pdfrouters.com", true, true)
-		c.SetCookie("auth-status", "login", year, "/", "https://file.pdfrouters.com", true, true)
+		//c.SetSameSite(http.SameSiteLaxMode)
+		c.SetCookie("session_token", sessionToken, year, "/", "localhost", false, true)
+		c.SetCookie("auth-status", "login", year, "/", "localhost", false, true)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
 	})
