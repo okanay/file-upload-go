@@ -62,7 +62,7 @@ func main() {
 	auth.POST("/assets/delete", assetHandler.DeleteAsset)
 
 	// Login Route
-	router.GET("/login", func(c *gin.Context) {
+	router.POST("/login", func(c *gin.Context) {
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
 		c.SetSameSite(http.SameSiteLaxMode)
