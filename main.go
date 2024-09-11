@@ -66,8 +66,8 @@ func main() {
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
 		//c.SetSameSite(http.SameSiteLaxMode)
-		c.SetCookie("session_token", sessionToken, year, "/", "localhost", false, true)
-		c.SetCookie("auth-status", "login", year, "/", "localhost", false, true)
+		c.SetCookie("session_token", sessionToken, 3600, "/", "localhost", false, true)
+		c.SetCookie("auth-status", "login", 3600, "/", "/", false, true)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
 	})
