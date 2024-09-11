@@ -24,7 +24,7 @@ func CorsConfig() gin.HandlerFunc {
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowOrigins:     []string{"http://file.pdfrouters.com", "http://localhost:3000"},
+		AllowOrigins:     []string{"http://file.pdfrouters.com", "http://localhost:3000", "https://rich-text-editor-lilac.vercel.app", "https://www.pdfrouters.com/", "https://pdfrouters.com/"},
 		AllowWildcard:    true,
 		AllowCredentials: true,
 		MaxAge:           60 * 24 * 30,
