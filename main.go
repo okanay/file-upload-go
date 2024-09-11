@@ -63,12 +63,12 @@ func main() {
 
 	// Login Route
 	router.GET("/login", func(c *gin.Context) {
-		month := 31 * 24 * 60 * 60 * 1000
+		month := 31 * 24 * 60 * 60 * 1
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
 		c.SetSameSite(http.SameSiteNoneMode)
-		c.SetCookie("session_token", sessionToken, month, "/", "", true, false)
-		c.SetCookie("auth-status", "login", month, "/", "", true, false)
+		c.SetCookie("session_token", sessionToken, month, "/", "http://localhost:3000/", true, false)
+		c.SetCookie("auth-status", "login", month, "/", "http://localhost:3000/", true, false)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
 	})
