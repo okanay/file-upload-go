@@ -74,6 +74,8 @@ func main() {
 
 		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "https://file.pdfrouters.com/", true, true)
 		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "https://file.pdfrouters.com/", false, false)
+
+		c.SetSameSite(http.SameSiteNoneMode)
 		c.JSON(http.StatusOK, gin.H{"message": "Login Successful"})
 	})
 
