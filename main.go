@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/okanay/file-upload-go/db"
@@ -64,8 +65,14 @@ func main() {
 	// Login Route
 	router.GET("/login", func(c *gin.Context) {
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
+		if sessionToken == "" {
+			sessionToken = "default-token-value"
+		}
 
-		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "", false, true) // SameSite ayarı eklenmeli
+		// Cookie ayarlarını kontrol etmek için log ekle
+		fmt.Println("[SET COOKIE] session_token:", sessionToken)
+
+		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "", true, true)
 		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "", false, false)
 		c.JSON(http.StatusOK, gin.H{"message": "Login Successful"})
 	})
