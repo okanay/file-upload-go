@@ -7,6 +7,7 @@ import (
 	"github.com/okanay/file-upload-go/internal/asset"
 	"github.com/okanay/file-upload-go/internal/upload"
 	"log"
+	"net/http"
 	"os"
 	"time"
 )
@@ -64,7 +65,7 @@ func main() {
 	router.GET("/login", func(c *gin.Context) {
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
-		//c.SetSameSite(http.SameSiteLaxMode)
+		c.SetSameSite(http.SameSiteNoneMode)
 		c.SetCookie("session_token", sessionToken, 3600, "/", "", false, true)
 		c.SetCookie("auth-status", "login", 3600, "/", "", false, true)
 
