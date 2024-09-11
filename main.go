@@ -63,12 +63,12 @@ func main() {
 
 	// Login Route
 	router.GET("/login", func(c *gin.Context) {
-		month := 31 * 24 * 60 * 60 * 1
+		year := 365 * 24 * 60 * 60 // Bir yıl
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
-		c.SetSameSite(http.SameSiteNoneMode)
-		c.SetCookie("session_token", sessionToken, month, "/", "http://localhost:3000/", true, false)
-		c.SetCookie("auth-status", "login", month, "/", "http://localhost:3000/", true, false)
+		c.SetSameSite(http.SameSiteLaxMode)                                   // SameSite özelliği güvenliği artırır
+		c.SetCookie("session_token", sessionToken, year, "/", "", true, true) // HTTPOnly ve Secure
+		c.SetCookie("auth-status", "login", year, "/", "", true, true)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
 	})
