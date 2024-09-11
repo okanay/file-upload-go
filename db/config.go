@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -21,19 +20,13 @@ var SecureMiddleware = secure.New(secure.Config{
 })
 
 func CorsConfig() gin.HandlerFunc {
-	allowedOriginEnv := os.Getenv("ALLOWED_ORIGIN")
-	if allowedOriginEnv == "" {
-		allowedOriginEnv = "http://localhost:3000" // Bu kısma backend'in çalıştığı URL'yi ekle
-	}
-	origins := strings.Split(allowedOriginEnv, " ")
-
 	return cors.New(cors.Config{
-		AllowOrigins:     origins, // Dikkat: '*' yerine belirli bir origin ayarla
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true, // Cookie'ler için gerekli
-		MaxAge:           12 * time.Hour,
+		AllowOrigins:     []string{"file.pdfrouters.com", "http://localhost:3000", "78.172.216.87:3000", "78.172.216.87"},
+		AllowCredentials: true,
+		MaxAge:           60 * 24 * 30,
 	})
 }
 
