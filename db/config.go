@@ -23,16 +23,16 @@ var SecureMiddleware = secure.New(secure.Config{
 func CorsConfig() gin.HandlerFunc {
 	allowedOriginEnv := os.Getenv("ALLOWED_ORIGIN")
 	if allowedOriginEnv == "" {
-		allowedOriginEnv = "http://localhost:3000"
+		allowedOriginEnv = "http://localhost:3000" // Bu kısma backend'in çalıştığı URL'yi ekle
 	}
 	origins := strings.Split(allowedOriginEnv, " ")
 
 	return cors.New(cors.Config{
-		AllowOrigins:     origins,
+		AllowOrigins:     origins, // Dikkat: '*' yerine belirli bir origin ayarla
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
+		AllowCredentials: true, // Cookie'ler için gerekli
 		MaxAge:           12 * time.Hour,
 	})
 }
@@ -73,12 +73,11 @@ func CookieMiddleware() gin.HandlerFunc {
 			Path:     "/",
 			MaxAge:   60 * 60 * 24 * 30, // 30 gün
 			HttpOnly: true,
-			Secure:   false,
-			SameSite: http.SameSiteLaxMode,
+			Secure:   false,                 // HTTPS kullanıyorsan true yap
+			SameSite: http.SameSiteNoneMode, // Cross-site istekler için SameSite=None
 		}
 
 		c.Set("cookie_options", cookieOptions)
-
 		c.Next()
 	}
 }
