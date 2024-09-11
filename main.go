@@ -43,6 +43,11 @@ func main() {
 	uploadHandler := upload.NewHandler(uploadService)
 	assetHandler := asset.NewAssetHandler(assetService, "./public", "./public/blur", "./public/optimized", true, 60*time.Minute)
 
+	// Main Route
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "Welcome to File Upload API", "Language": "Go Lang", "Framework": "Gin Gonic"})
+	})
+
 	// Upload Route
 	router.POST("/upload", uploadHandler.UploadFile)
 
