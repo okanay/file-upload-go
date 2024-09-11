@@ -68,7 +68,7 @@ func main() {
 			sessionToken = "default-token-value"
 		}
 
-		c.SetSameSite(http.SameSiteNoneMode)
+		c.SetSameSite(http.SameSiteLaxMode)
 		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "", true, true)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
