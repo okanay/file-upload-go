@@ -31,6 +31,7 @@ func main() {
 	router := gin.Default()
 	router.Use(db.SecureMiddleware)
 	router.Use(db.CorsConfig())
+	router.Use(db.CookieMiddleware())
 	router.Use(db.TimeoutMiddleware(150 * time.Second))
 
 	// ->> Auth Middleware
@@ -64,8 +65,8 @@ func main() {
 	router.GET("/login", func(c *gin.Context) {
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
-		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "", false, true) // secure=false, httponly=true
-		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "", false, false)       // secure=false, httponly=false
+		c.SetCookie("session_token", sessionToken, 60*60*24*30, "/", "", false, true) // SameSite ayarı eklenmeli
+		c.SetCookie("auth-status", "login", 60*60*24*30, "/", "", false, false)
 		c.JSON(http.StatusOK, gin.H{"message": "Login Successful"})
 	})
 

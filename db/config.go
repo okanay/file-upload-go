@@ -67,6 +67,22 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
+func CookieMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		cookieOptions := &http.Cookie{
+			Path:     "/",
+			MaxAge:   60 * 60 * 24 * 30, // 30 gün
+			HttpOnly: true,
+			Secure:   false,
+			SameSite: http.SameSiteLaxMode,
+		}
+
+		c.Set("cookie_options", cookieOptions)
+
+		c.Next()
+	}
+}
+
 func TimeoutMiddleware(timeout time.Duration) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(c.Request.Context(), timeout)
