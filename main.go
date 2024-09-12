@@ -65,7 +65,7 @@ func main() {
 	router.GET("/login", func(c *gin.Context) {
 		sessionToken := os.Getenv("SECRET_SESSION_KEY")
 
-		c.SetSameSite(http.SameSiteStrictMode)
+		c.SetSameSite(http.SameSiteLaxMode)
 		c.SetCookie("session_token", sessionToken, 3600, "/", "", true, true)
 
 		c.JSON(200, gin.H{"message": "Login Successful"})
@@ -74,7 +74,6 @@ func main() {
 	// Logout Route
 	auth.GET("/logout", func(c *gin.Context) {
 		c.SetCookie("session_token", "", -1, "/", "", true, true)
-		c.SetCookie("auth-status", "logout", -1, "/", "", false, false)
 
 		c.JSON(200, gin.H{"message": "Logout Successful"})
 	})
